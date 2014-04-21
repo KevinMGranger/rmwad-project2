@@ -1,0 +1,33 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700,400italic);
+
+figure > img {
+	border: 1px black dotted;
+	padding: 2px;
+	margin: 2rem;
+	display: block;
+	vertical-align: top;
+}
+
+figure, figure > img {
+	max-width: 100%;
+	min-width: 750px;
+}
+
+figure {
+	display: table;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+header, figcaption {
+	text-align: center;
+}
+
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
+section {
+	margin-top: 1rem;
+	border-top: 2px black solid;
+}
