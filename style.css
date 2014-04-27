@@ -1,0 +1,41 @@
+body{
+	font-family: Arial;
+}
+
+header{
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 50px;
+	width: 100%;
+	background-color: #F36E21;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#main-content{
+	padding-top: 75px;
+}
+
+#main-content #content{
+	position: inherit;
+	margin: auto;
+	width: 300px;
+}
+
+#main-content #banner{
+	position: inherit;
+	width: 300px;
+	height: 70px;
+	margin: auto;
+	margin-bottom: 15px;
+}
+
+#main-content #load{
+	position: inherit;
+	border: 2px solid black;
+	width: 300px;
+	height: 500px;
+	text-align: center;
+	border-radius: 20px;
+}
