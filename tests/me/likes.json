@@ -1,0 +1,126 @@
+// //graph.facebook.com/v2.0/me/likes
+{
+  "data": [
+    {
+      "category": "Games/toys",
+      "name": "Grand Theft Auto V",
+      "created_time": "2014-04-30T15:19:31+0000",
+      "id": "473819899309541"
+    },
+    {
+      "category": "Public figure",
+      "name": "Bruce Schneier",
+      "created_time": "2014-04-30T13:59:12+0000",
+      "id": "60615378024"
+    },
+    {
+      "category": "Product/service",
+      "name": "Facebook Developers",
+      "created_time": "2014-04-28T16:14:11+0000",
+      "id": "19292868552"
+    },
+    {
+      "category": "Non-profit organization",
+      "name": "The Construct at RIT",
+      "created_time": "2014-04-23T03:34:00+0000",
+      "id": "574591302582739"
+    },
+    {
+      "category": "Movie",
+      "name": "Idiocracy",
+      "created_time": "2014-04-22T21:39:08+0000",
+      "id": "1422880871299863"
+    },
+    {
+      "category": "University",
+      "category_list": [
+        {
+          "id": "108051929285833",
+          "name": "College & University"
+        }
+      ],
+      "name": "RIT Academic Support Center",
+      "created_time": "2014-04-16T18:47:30+0000",
+      "id": "1423260191254768"
+    },
+    {
+      "category": "Community",
+      "name": "No Voice Day 2014",
+      "created_time": "2014-04-16T13:41:57+0000",
+      "id": "433017303511178"
+    },
+    {
+      "category": "Movie",
+      "name": "Transcendence",
+      "created_time": "2014-04-14T16:02:46+0000",
+      "id": "588721884481821"
+    },
+    {
+      "category": "Retail and consumer merchandise",
+      "category_list": [
+        {
+          "id": "139823692748565",
+          "name": "Computers & Electronics"
+        }
+      ],
+      "name": "Newegg.com",
+      "created_time": "2014-04-13T19:31:48+0000",
+      "id": "5585759167"
+    },
+    {
+      "category": "Product/service",
+      "name": "Rosewill",
+      "created_time": "2014-04-12T14:37:08+0000",
+      "id": "171709042433"
+    },
+    {
+      "category": "Video game",
+      "name": "Super Smash Bros.",
+      "created_time": "2014-04-09T14:14:56+0000",
+      "id": "224173137756374"
+    },
+    {
+      "category": "Games/toys",
+      "name": "Goat Simulator",
+      "created_time": "2014-04-07T16:27:09+0000",
+      "id": "251177308385462"
+    },
+    {
+      "category": "Computers/technology",
+      "category_list": [
+        {
+          "id": "2255",
+          "name": "Computers/Technology"
+        }
+      ],
+      "name": "BarCamp Rochester",
+      "created_time": "2014-04-02T22:47:55+0000",
+      "id": "117025371665384"
+    },
+    {
+      "category": "Media/news/publishing",
+      "name": "The Verge",
+      "created_time": "2014-03-27T21:49:57+0000",
+      "id": "193742123995472"
+    },
+    {
+      "category": "Consulting/business services",
+      "category_list": [
+        {
+          "id": "2248",
+          "name": "Consulting/Business Services"
+        }
+      ],
+      "name": "Simone Center for Student Innovation and Entrepreneurship",
+      "created_time": "2014-03-12T21:42:59+0000",
+      "id": "556535024454638"
+    }
+  ],
+  "paging": {
+    "cursors": {
+      "after": "NTU2NTM1MDI0NDU0NjM4",
+      "before": "NDczODE5ODk5MzA5NTQx"
+    },
+    "next": "https://graph.facebook.com/v2.0/123456789/likes?limit=25&after=NTU2NTM1MDI0NDU0NjM4"
+  }
+}
