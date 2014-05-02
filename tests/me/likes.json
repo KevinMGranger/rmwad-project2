@@ -1,5 +1,5 @@
-// //graph.facebook.com/v2.0/me/likes
 {
+	"_comment": "//graph.facebook.com/v2.0/me/likes",
   "data": [
     {
       "category": "Games/toys",
