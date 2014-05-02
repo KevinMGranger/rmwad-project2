@@ -1,5 +1,5 @@
-// //graph.facebook.com/v2.0/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people
 {
+	"_comment": "//graph.facebook.com/v2.0/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people",
   "education": [
     {
       "school": {

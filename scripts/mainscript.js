@@ -7,7 +7,7 @@
 window.onload= init;
 
 function init(){
-	document.getElementById("logIn").onclick= function(){getInfo('tests/me.json');};
+	document.getElementById("logIn").onclick= function(){getInfo('./tests/me.json');};
 }
 
 function getInfo(file) {
@@ -20,7 +20,7 @@ function getInfo(file) {
     xhr.send(null);
   }
 }
-
+var myJSON;
 function displayResponseJSON(xhr) {
   if (xhr.readyState == 4) {
     if (xhr.status == 200 || xhr.status == 304) {
@@ -31,24 +31,26 @@ function displayResponseJSON(xhr) {
       // clear contents of #content div
       contentDiv.innerHTML="";
 
-      var myJSON = JSON.parse( xhr.responseText ); 
+     myJSON = JSON.parse( xhr.responseText ); 
       var allInfo = myJSON; 
 
-      // loop through all information
-      for (var i=0;i<allInfo.length;i++){ 
-        var info = allInfo[i]; 
+        var info = myJSON; 
         // find information for the name, high school, first choice major, and favorite sports team
         var name = info.name;
         console.log(name);
 
-        var highSchool = info.education[0].school.name;
+        var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
+	if (highSchools.length) {
+		var highSchool = highSchools[0].school.name;
+	}
         console.log(highSchool);
 
-        var majors = info.education["concentration"];
-        var firstChoice = majors[0].name;
+        var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
+	var majors = colleges.filter(function(skool){ return skool.concentration;}).map(function(skool){ return skool.concentration[0].name; });
+        var firstChoice = majors[0];
         console.log(firstChoice); 
 
-        var favoriteTeam = info.favorite_teams[0];
+        var favoriteTeam = info.favorite_teams[0].name;
         console.log(favoriteTeam);
 
         // create HTML elements to hold the info
@@ -84,8 +86,6 @@ function displayResponseJSON(xhr) {
         // add div to document 
         contentDiv.appendChild(div); 
 
-        // keep looping 
-      } // end for
       
     } // end if request.status
   } // end request.readyState
