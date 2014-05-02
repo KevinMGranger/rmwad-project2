@@ -14,16 +14,18 @@ header{
 }
 
 #main-content{
+	width: 100%;
 	padding-top: 75px;
 }
 
 #main-content #content{
 	position: inherit;
 	margin: auto;
-	width: 300px;
+	width: 100%;
+	text-align: center;
 }
 
-#main-content #banner{
+#main-content #content #banner{
 	position: inherit;
 	width: 300px;
 	height: 70px;
@@ -31,11 +33,34 @@ header{
 	margin-bottom: 15px;
 }
 
+#main-content #content button{
+	position: inherit;
+	margin: auto;
+	width: 100px;
+	height: 30px;
+}
+
 #main-content #load{
 	position: inherit;
-	border: 2px solid black;
-	width: 300px;
+	width: 100%;
 	height: 500px;
 	text-align: center;
-	border-radius: 20px;
+	padding-top: 30px;
 }
+
+#name{
+	
+}
+
+#highSchool{
+	float: left;
+}
+
+#major{
+	float: left;
+}
+
+#favoriteTeam{
+	float: left;
+}
+
