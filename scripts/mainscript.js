@@ -20,76 +20,98 @@ function getInfo(file) {
     xhr.send(null);
   }
 }
+
 var myJSON;
+
 function displayResponseJSON(xhr) {
   if (xhr.readyState == 4) {
     if (xhr.status == 200 || xhr.status == 304) {
-     //alert(xhr.responseText);
-     // get reference to #content div
+      //alert(xhr.responseText);
+
+      // first remove the log in button
+      var parentDiv = document.getElementById('content');
+      var removeDiv = document.getElementById('logDiv');
+      parentDiv.removeChild(removeDiv);
+
+      // get reference to #load div
       var contentDiv = document.getElementById('load');
-      
+
       // clear contents of #content div
       contentDiv.innerHTML="";
 
-     myJSON = JSON.parse( xhr.responseText ); 
-      var allInfo = myJSON; 
+      myJSON = JSON.parse( xhr.responseText ); 
 
-        var info = myJSON; 
-        // find information for the name, high school, first choice major, and favorite sports team
-        var name = info.name;
-        console.log(name);
+      var info = myJSON; 
+      // find information for the name, high school, first choice major, and favorite sports team
+      var name = info.name;
+      console.log(name);
 
-        var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
-	if (highSchools.length) {
-		var highSchool = highSchools[0].school.name;
-	}
-        console.log(highSchool);
+      var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
+      if (highSchools.length) {
+        var highSchool = highSchools[0].school.name;
+      }
+      console.log(highSchool);
 
-        var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
-	var majors = colleges.filter(function(skool){ return skool.concentration;}).map(function(skool){ return skool.concentration[0].name; });
-        var firstChoice = majors[0];
-        console.log(firstChoice); 
+      var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
+      var majors = colleges.filter(function(skool){ return skool.concentration;}).map(function(skool){ return skool.concentration[0].name; });
+      var firstChoice = majors[0];
+      console.log(firstChoice); 
 
-        var favoriteTeam = info.favorite_teams[0].name;
-        console.log(favoriteTeam);
+      var favoriteTeam = info.favorite_teams[0].name;
+      console.log(favoriteTeam);
 
-        // create HTML elements to hold the info
-        // first a new container <div> 
-        var userDiv = document.createElement('div');
-        var detailsDiv = document.createElement('div');
-        detailsDiv.setAttribute("id", "details");
+      // create HTML elements to hold the info
+      // first a new container <div> 
+      var userDiv = document.createElement('div');
+      var detailsDiv = document.createElement('div');
+      detailsDiv.setAttribute("id", "details");
 
-        // then everything else
-        var nameElement = document.createElement('h1'); 
-        nameElement.innerHTML = name;
-        nameElement.setAttribute("id", "name");
+      // then everything else
+      var nameElement = document.createElement('h1'); 
+      nameElement.innerHTML = name;
+      nameElement.setAttribute("id", "name");
 
-        var highSchoolElement = document.createElement('h2'); 
-        highSchoolElement.innerHTML = highSchool;
-        highSchoolElement.setAttribute("id", "highSchool");
+      var highSchoolElement = document.createElement('h2'); 
+      highSchoolElement.innerHTML = highSchool;
+      highSchoolElement.setAttribute("id", "highSchool");
 
-        var majorElement = document.createElement('h2');
-        majorElement.innerHTML = firstChoice;
-        majorElement.setAttribute("id", "major");
+      var majorElement = document.createElement('h2');
+      majorElement.innerHTML = firstChoice;
+      majorElement.setAttribute("id", "major");
 
-        var favoriteTeamElement = document.createElement('p');
-        favoriteTeamElement.innerHTML = favoriteTeam;
-        favoriteTeamElement.setAttribute("id", "favoriteTeam");
-        //var imgElement = document.createElement("img");
-        //imgElement.src = img["#text"];
+      var favoriteTeamElement = document.createElement('p');
+      favoriteTeamElement.innerHTML = favoriteTeam;
+      favoriteTeamElement.setAttribute("id", "favoriteTeam");
 
-        detailsDiv.appendChild(highSchoolElement);
-        detailsDiv.appendChild(majorElement);
-        detailsDiv.appendChild(favoriteTeamElement);
+      detailsDiv.appendChild(highSchoolElement);
+      detailsDiv.appendChild(majorElement);
+      detailsDiv.appendChild(favoriteTeamElement);
 
-        // append new elements to new <div> 
-        userDiv.appendChild(nameElement); 
-        userDiv.appendChild(detailsDiv);
+      // append new elements to new <div> 
+      userDiv.appendChild(nameElement); 
+      userDiv.appendChild(detailsDiv);
 
-        // add div to document 
-        contentDiv.appendChild(userDiv); 
+      // add div to document 
+      contentDiv.appendChild(userDiv); 
 
-      
+      var mapDiv = document.createElement('div');
+      mapDiv.setAttribute("id", "map-canvas");
+
+      userDiv.appendChild(mapDiv);
+
+      initializeMap();
     } // end if request.status
   } // end request.readyState
 } // end display response
+
+// Sets up Google Map
+function initializeMap() {
+      var myOptions = {
+        center: new google.maps.LatLng(43.083848,-77.6799),
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      // create google map  
+      var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+      
+};
