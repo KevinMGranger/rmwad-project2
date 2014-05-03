@@ -55,7 +55,9 @@ function displayResponseJSON(xhr) {
 
         // create HTML elements to hold the info
         // first a new container <div> 
-        var div = document.createElement('div'); 
+        var userDiv = document.createElement('div');
+        var detailsDiv = document.createElement('div');
+        detailsDiv.setAttribute("id", "details");
 
         // then everything else
         var nameElement = document.createElement('h1'); 
@@ -76,15 +78,16 @@ function displayResponseJSON(xhr) {
         //var imgElement = document.createElement("img");
         //imgElement.src = img["#text"];
 
+        detailsDiv.appendChild(highSchoolElement);
+        detailsDiv.appendChild(majorElement);
+        detailsDiv.appendChild(favoriteTeamElement);
+
         // append new elements to new <div> 
-        div.appendChild(nameElement); 
-        div.appendChild(highSchoolElement); 
-        div.appendChild(majorElement);
-        div.appendChild(favoriteTeamElement);
-        //div.appendChild(document.createElement('hr')); 
+        userDiv.appendChild(nameElement); 
+        userDiv.appendChild(detailsDiv);
 
         // add div to document 
-        contentDiv.appendChild(div); 
+        contentDiv.appendChild(userDiv); 
 
       
     } // end if request.status

@@ -48,16 +48,8 @@ header{
 	padding-top: 30px;
 }
 
-#name{
-	
-}
-
-#highSchool{
-}
-
-#major{
-}
-
-#favoriteTeam{
+#details{
+	float: left;
+	text-align: left;
 }
 
