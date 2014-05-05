@@ -2,7 +2,9 @@
 
 window.addEventListener("onload", init);
 
-function init(){}
+function init(){
+	//document.getElementById("logIn").onclick= function(){getInfo('./tests/me.json');};
+}
 
 /** Perform an AJAX request
  * url: the url to send the request to
@@ -108,6 +110,14 @@ function parsePersonalInfo(json) {
 
 	// add div to document 
 	contentDiv.appendChild(userDiv); 
+
+
+      var mapDiv = document.createElement('div');
+      mapDiv.setAttribute("id", "map-canvas");
+
+      userDiv.appendChild(mapDiv);
+
+      initializeMap();
 } // end display response
 
 // Sets up Google Map
