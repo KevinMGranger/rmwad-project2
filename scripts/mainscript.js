@@ -1,95 +1,111 @@
-/*
-	OLD SCHOOL - NO jQuery used
-	One issue will be that not every version of IE supports the XHR object
-*/
 "use strict";
 
-window.onload= init;
+window.addEventListener("onload", init);
 
-function init(){
-	document.getElementById("logIn").onclick= function(){getInfo('./tests/me.json');};
+function init(){}
+
+/** Perform an AJAX request
+ * url: the url to send the request to
+ * callback: the function to call, passing the response. If falsy, log the output.
+ * wrap: if true, only call the callback on readyState 4 and HTTP status 200 or 304.
+ * If callback is falsy, output is not wrapped.
+ */
+function doAjax(url, callback, wrap) {
+	var xhr = new XMLHttpRequest();
+	if (xhr) {
+		if (callback) {
+			if (wrap) {
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+						callback(xhr);
+					}
+				}
+			} else {
+				xhr.onreadystatechange = function() {
+					callback(xhr);
+				}
+			}
+		} else {
+			xhr.onreadystatechange = function() {
+				console.log(xhr);
+			}
+		}
+		xhr.open("GET", url, true);
+		xhr.send(null);
+	} else {
+		throw "couldn't create an XHR";
+	}
 }
 
-function getInfo(file) {
-  var xhr = new XMLHttpRequest();
-  if (xhr) {
-    xhr.onreadystatechange = function() {
-      displayResponseJSON(xhr);
-    };
-    xhr.open("GET", file, true);
-    xhr.send(null);
-  }
+
+
+function parsePersonalInfoResponse(xhr) {
+	var myJSON = JSON.parse( xhr.responseText ); 
+	parsePersonalInfo(myJSON);
 }
-var myJSON;
-function displayResponseJSON(xhr) {
-  if (xhr.readyState == 4) {
-    if (xhr.status == 200 || xhr.status == 304) {
-     //alert(xhr.responseText);
-     // get reference to #content div
-      var contentDiv = document.getElementById('load');
-      
-      // clear contents of #content div
-      contentDiv.innerHTML="";
+function parsePersonalInfo(json) {
+	//alert(xhr.responseText);
 
-     myJSON = JSON.parse( xhr.responseText ); 
-      var allInfo = myJSON; 
+	// get reference to #content div
+	var contentDiv = document.getElementById('load');
 
-        var info = myJSON; 
-        // find information for the name, high school, first choice major, and favorite sports team
-        var name = info.name;
-        console.log(name);
+	// clear contents of #content div
+	contentDiv.innerHTML="";
 
-        var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
+	var allInfo = json; 
+
+	var info = json; 
+	// find information for the name, high school, first choice major, and favorite sports team
+	var name = info.name;
+	console.log(name);
+
+	var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
 	if (highSchools.length) {
 		var highSchool = highSchools[0].school.name;
 	}
-        console.log(highSchool);
+	console.log(highSchool);
 
-        var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
+	var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
 	var majors = colleges.filter(function(skool){ return skool.concentration;}).map(function(skool){ return skool.concentration[0].name; });
-        var firstChoice = majors[0];
-        console.log(firstChoice); 
+	var firstChoice = majors[0];
+	console.log(firstChoice); 
 
-        var favoriteTeam = info.favorite_teams[0].name;
-        console.log(favoriteTeam);
+	var favoriteTeam = info.favorite_teams[0].name;
+	console.log(favoriteTeam);
 
-        // create HTML elements to hold the info
-        // first a new container <div> 
-        var userDiv = document.createElement('div');
-        var detailsDiv = document.createElement('div');
-        detailsDiv.setAttribute("id", "details");
+	// create HTML elements to hold the info
+	// first a new container <div> 
+	var userDiv = document.createElement('div');
+	var detailsDiv = document.createElement('div');
+	detailsDiv.setAttribute("id", "details");
 
-        // then everything else
-        var nameElement = document.createElement('h1'); 
-        nameElement.innerHTML = name;
-        nameElement.setAttribute("id", "name");
+	// then everything else
+	var nameElement = document.createElement('h1'); 
+	nameElement.innerHTML = name;
+	nameElement.setAttribute("id", "name");
 
-        var highSchoolElement = document.createElement('h2'); 
-        highSchoolElement.innerHTML = highSchool;
-        highSchoolElement.setAttribute("id", "highSchool");
+	var highSchoolElement = document.createElement('h2'); 
+	highSchoolElement.innerHTML = highSchool;
+	highSchoolElement.setAttribute("id", "highSchool");
 
-        var majorElement = document.createElement('h2');
-        majorElement.innerHTML = firstChoice;
-        majorElement.setAttribute("id", "major");
+	var majorElement = document.createElement('h2');
+	majorElement.innerHTML = firstChoice;
+	majorElement.setAttribute("id", "major");
 
-        var favoriteTeamElement = document.createElement('p');
-        favoriteTeamElement.innerHTML = favoriteTeam;
-        favoriteTeamElement.setAttribute("id", "favoriteTeam");
-        //var imgElement = document.createElement("img");
-        //imgElement.src = img["#text"];
+	var favoriteTeamElement = document.createElement('p');
+	favoriteTeamElement.innerHTML = favoriteTeam;
+	favoriteTeamElement.setAttribute("id", "favoriteTeam");
+	//var imgElement = document.createElement("img");
+	//imgElement.src = img["#text"];
 
-        detailsDiv.appendChild(highSchoolElement);
-        detailsDiv.appendChild(majorElement);
-        detailsDiv.appendChild(favoriteTeamElement);
+	detailsDiv.appendChild(highSchoolElement);
+	detailsDiv.appendChild(majorElement);
+	detailsDiv.appendChild(favoriteTeamElement);
 
-        // append new elements to new <div> 
-        userDiv.appendChild(nameElement); 
-        userDiv.appendChild(detailsDiv);
+	// append new elements to new <div> 
+	userDiv.appendChild(nameElement); 
+	userDiv.appendChild(detailsDiv);
 
-        // add div to document 
-        contentDiv.appendChild(userDiv); 
-
-      
-    } // end if request.status
-  } // end request.readyState
+	// add div to document 
+	contentDiv.appendChild(userDiv); 
 } // end display response

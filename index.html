@@ -9,6 +9,7 @@
 </head>
 
 <body>
+<script src="scripts/fb.js"></script>
 	<header>
 		<h3>Created by Firebert and Ripberger</h3>
 	</header>
@@ -23,6 +24,16 @@
 		</div>
 	</div>
 
-</body>
+<!--
+  Below we include the Login Button social plugin. This button uses
+  the JavaScript SDK to present a graphical Login button that triggers
+  the FB.login() function when clicked.
+-->
 
+<div class="fb-login-button" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false" data-scope="user_about_me,user_friends,user_hometown,user_location,user_interests,user_activities,user_likes,user_education_history" onlogin="checkLoginState()"></div>
+<button id="appLogout" onclick="appLogout()">Log Out (for testing)</button>
+<div id="status">
+</div>
+
+</body>    
 </html>
