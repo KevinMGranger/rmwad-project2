@@ -109,3 +109,37 @@ function parsePersonalInfo(json) {
 	// add div to document 
 	contentDiv.appendChild(userDiv); 
 } // end display response
+
+// Sets up Google Map
+function initializeMap() {
+
+  if (!navigator.geolocation){
+    console.log("Geolocation not supported");
+    return;
+  } else {
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+};
+
+// From MDN
+function success(position) {
+  var latitude  = position.coords.latitude;
+  var longitude = position.coords.longitude;
+
+  console.log(latitude + " " + longitude);
+
+  // give map options
+  var myOptions = {
+    center: new google.maps.LatLng(latitude,longitude),
+    zoom: 16,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
+  // create google map  
+  var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+};
+
+// From MDN
+function error() {
+  console.log("Couldn't retrieve location");
+};
