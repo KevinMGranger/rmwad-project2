@@ -11,7 +11,7 @@ function statusChangeCallback(response) {
 	if (response.status === 'connected') {
 		// Logged into your app and Facebook.
 		//testAPI();
-		FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', parsePersonalInfo);
+		FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', function(resp) { updateStatusGoodLogin(resp); parsePersonalInfo(resp);});
 	} else if (response.status === 'not_authorized') {
 		// The person is logged into Facebook, but not your app.
 		document.getElementById('status').innerHTML = 'Please log ' +
@@ -71,8 +71,17 @@ window.fbAsyncInit = function() {
 function testAPI() {
 	console.log('Welcome!  Fetching your information.... ');
 	FB.api('/me', function(response) {
-		console.log('Good to see you, ' + response.name + '.');
-		document.getElementById('status').innerHTML = 'Good to see you, ' +
-			response.name;
+		updateStatusGoodLogin(response);
 	});
+}
+
+function updateStatusGoodLogin(resp) {
+		console.log('Good to see you, ' + resp.name + '.');
+		document.getElementById('status').innerHTML = 'Good to see you, ' +
+			resp.name;
+}
+
+function appLogout() {
+	FB.api('/me/permissions', 'DELETE');
+	checkLoginState();
 }

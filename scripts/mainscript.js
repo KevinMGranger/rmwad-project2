@@ -38,10 +38,9 @@ function doAjax(url, callback, wrap) {
 }
 
 
-var myJSON;
 
 function parsePersonalInfoResponse(xhr) {
-	myJSON = JSON.parse( xhr.responseText ); 
+	var myJSON = JSON.parse( xhr.responseText ); 
 	parsePersonalInfo(myJSON);
 }
 function parsePersonalInfo(json) {

@@ -30,7 +30,8 @@
   the FB.login() function when clicked.
 -->
 
-<div class="fb-login-button" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false" data-scope="user_about_me,user_friends,user_hometown,user_location,user_interests,user_activities,user_likes" onlogin="checkLoginState()"></div>
+<div class="fb-login-button" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false" data-scope="user_about_me,user_friends,user_hometown,user_location,user_interests,user_activities,user_likes,user_education_history" onlogin="checkLoginState()"></div>
+<button id="appLogout" onclick="appLogout()">Log Out (for testing)</button>
 <div id="status">
 </div>
 
