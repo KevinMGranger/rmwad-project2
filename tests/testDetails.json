@@ -1,0 +1,12 @@
+{
+  "similarities":{
+      "highschool" : "dingus high",
+      "state" : "NJ",
+      "favorites" : [{
+        "team" : "yakeess",
+        "book" : "harry potter",
+        "music": "katy perry",
+        "movies": "hoory pooter"
+      }]
+  }
+}
