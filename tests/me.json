@@ -1,0 +1,92 @@
+{
+	"_comment": "//graph.facebook.com/v2.0/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people",
+  "education": [
+    {
+      "school": {
+        "id": "123456789012345",
+        "name": "Dingus McBringus Senior High School"
+      },
+      "type": "High School",
+      "year": {
+        "id": "123456789012345",
+        "name": "2010"
+      }
+    },
+    {
+      "school": {
+        "id": "108470292517412",
+        "name": "RIT"
+      },
+      "type": "College"
+    },
+    {
+      "concentration": [
+        {
+          "id": "186794724687946",
+          "name": "Game Design and Development"
+        },
+        {
+          "id": "109279729089828",
+          "name": "Ukulele"
+        }
+      ],
+      "school": {
+        "id": "12355161929",
+        "name": "Rochester Institute of Technology"
+      },
+      "type": "College"
+    }
+  ],
+  "name": "Kevin Granger",
+  "inspirational_people": [
+    {
+      "id": "105499302815949",
+      "name": "Carl Sagan"
+    },
+    {
+      "id": "48947135361",
+      "name": "Bill Nye The Science Guy"
+    },
+    {
+      "id": "109306092421035",
+      "name": "Neil deGrasse Tyson"
+    },
+    {
+      "id": "103115986394977",
+      "name": "Gabe Newell"
+    },
+    {
+      "id": "113098822037321",
+      "name": "Linus Torvalds"
+    },
+    {
+      "id": "112830992063167",
+      "name": "Richard Stallman"
+    },
+    {
+      "id": "103115986394977",
+      "name": "Gabe Newell"
+    },
+    {
+      "id": "113098822037321",
+      "name": "Linus Torvalds"
+    },
+    {
+      "id": "112830992063167",
+      "name": "Richard Stallman"
+    }
+  ],
+  "favorite_athletes": [
+    {
+      "id": "64263459777",
+      "name": "Lance Armstrong"
+    }
+  ],
+  "favorite_teams": [
+    {
+      "id": "171987876155366",
+      "name": "RIT Tigers"
+    }
+  ],
+  "id": "123456789"
+}

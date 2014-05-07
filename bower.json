@@ -1,0 +1,8 @@
+{
+  "name": "rmwad-project2",
+  "version": "0.0.1",
+  "dependencies": {
+	  "bootstrap": "latest"
+  },
+  "private": true
+}

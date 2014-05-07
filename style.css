@@ -1,0 +1,66 @@
+body{
+	font-family: Arial;
+}
+
+header{
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 50px;
+	width: 100%;
+	background-color: #F36E21;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#main-content{
+	width: 100%;
+	padding-top: 75px;
+}
+
+#main-content #content{
+	position: inherit;
+	margin: auto;
+	width: 100%;
+	text-align: center;
+}
+
+#main-content #content #banner{
+	position: inherit;
+	width: 200px;
+	height: 200px;
+	margin: auto;
+	margin-bottom: 15px;
+}
+
+#main-content #content button{
+	position: inherit;
+	margin: auto;
+	width: 100px;
+	height: 30px;
+}
+
+#main-content #load{
+	position: inherit;
+	width: 100%;
+	height: 500px;
+	text-align: center;
+	padding-top: 30px;
+}
+
+#details{
+	float: left;
+	text-align: left;
+	margin-left: 50px;
+}
+
+#map-canvas{
+	width: 500px;
+	height: 500px;
+	float:right;
+	margin-right: 50px;
+	border:1px solid black;
+	z-index: 1;
+}
+
