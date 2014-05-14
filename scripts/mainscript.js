@@ -1,5 +1,8 @@
 "use strict";
 
+var geocoder;
+var map;
+
 window.addEventListener("onload", init);
 
 function init(){
@@ -126,7 +129,7 @@ function parsePersonalInfo(json) {
 
 	document.getElementById("find").onclick= function(){doAjax('./tests/testDetails.json', compareUsers, true);};
 
-	//initializeMap();
+	initializeMap();
 } // end display response
 
 // USER COMPARISON PAGE
@@ -202,38 +205,3 @@ function parseUserCompare(json){
 	document.getElementById("back").onclick= function(){FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', function(resp) { updateStatusGoodLogin(resp); parsePersonalInfo(resp);});};
 
 }
-
-/*
-// Sets up Google Map
-function initializeMap() {
-
-  if (!navigator.geolocation){
-    console.log("Geolocation not supported");
-    return;
-  } else {
-    navigator.geolocation.getCurrentPosition(success, error);
-  }
-};
-
-// From MDN
-function success(position) {
-  var latitude  = position.coords.latitude;
-  var longitude = position.coords.longitude;
-
-  console.log(latitude + " " + longitude);
-
-  // give map options
-  var myOptions = {
-    center: new google.maps.LatLng(latitude,longitude),
-    zoom: 16,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-
-  // create google map  
-  var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
-};
-
-// From MDN
-function error() {
-  console.log("Couldn't retrieve location");
-};*/
