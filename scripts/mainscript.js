@@ -39,7 +39,7 @@ function doAjax(url, callback, wrap) {
 	}
 }
 
-
+// USER LOGIN PAGE
 
 function parsePersonalInfoResponse(xhr) {
 	var myJSON = JSON.parse( xhr.responseText ); 
@@ -59,29 +59,30 @@ function parsePersonalInfo(json) {
 	var info = json; 
 	// find information for the name, high school, first choice major, and favorite sports team
 	var name = info.name;
-	console.log(name);
+	//console.log(name);
 
 	var highSchools = info.education.filter(function(skool){ return skool.type == "High School"});
 	if (highSchools.length) {
 		var highSchool = highSchools[0].school.name;
 	}
-	console.log(highSchool);
+	//console.log(highSchool);
 
 	var colleges = info.education.filter(function(skool){ return skool.type == "College"; } );
 	var majors = colleges.filter(function(skool){ return skool.concentration;}).map(function(skool){ return skool.concentration[0].name; });
 	var firstChoice = majors[0];
-	console.log(firstChoice); 
+	//console.log(firstChoice); 
 
 	var favoriteTeam = info.favorite_teams[0].name;
-	console.log(favoriteTeam);
+	//console.log(favoriteTeam);
 
 	// create HTML elements to hold the info
-	// first a new container <div> 
+	// user's div will contain their name, details, the map, and the compare button
 	var userDiv = document.createElement('div');
+
+	// store all of user's relevant details
 	var detailsDiv = document.createElement('div');
 	detailsDiv.setAttribute("id", "details");
 
-	// then everything else
 	var nameElement = document.createElement('h1'); 
 	nameElement.innerHTML = name;
 	nameElement.setAttribute("id", "name");
@@ -97,9 +98,8 @@ function parsePersonalInfo(json) {
 	var favoriteTeamElement = document.createElement('p');
 	favoriteTeamElement.innerHTML = favoriteTeam;
 	favoriteTeamElement.setAttribute("id", "favoriteTeam");
-	//var imgElement = document.createElement("img");
-	//imgElement.src = img["#text"];
 
+	// add the elements to the details
 	detailsDiv.appendChild(highSchoolElement);
 	detailsDiv.appendChild(majorElement);
 	detailsDiv.appendChild(favoriteTeamElement);
@@ -108,18 +108,102 @@ function parsePersonalInfo(json) {
 	userDiv.appendChild(nameElement); 
 	userDiv.appendChild(detailsDiv);
 
+	// add a google map to the user's div
+	var mapDiv = document.createElement('div');
+	mapDiv.setAttribute("id", "map-canvas");
+
+	userDiv.appendChild(mapDiv);
+
+	// add a button to prompt comparison on the page
+	var compareButton = document.createElement('button');
+	compareButton.setAttribute("id", "find");
+	compareButton.innerHTML = "Find other Tigers!";
+
+	userDiv.appendChild(compareButton);
+
 	// add div to document 
 	contentDiv.appendChild(userDiv); 
 
+	document.getElementById("find").onclick= function(){doAjax('./tests/testDetails.json', compareUsers, true);};
 
-      var mapDiv = document.createElement('div');
-      mapDiv.setAttribute("id", "map-canvas");
-
-      userDiv.appendChild(mapDiv);
-
-      initializeMap();
+	//initializeMap();
 } // end display response
 
+// USER COMPARISON PAGE
+
+function compareUsers(xhr){
+	var myJSON = JSON.parse( xhr.responseText ); 
+	parseUserCompare(myJSON);
+}
+
+function parseUserCompare(json){
+	// get reference to #content div
+	var contentDiv = document.getElementById('load');
+
+	// clear contents of #content div
+	contentDiv.innerHTML="";
+
+	var info = json; 
+	console.log(info);
+
+	// create a div to hold all the match data
+	var matchDiv = document.createElement('div');
+
+	var foundUser = info.match1;
+	var foundUserElement = document.createElement('h2');
+	foundUserElement.innerHTML = "You were matched with " + foundUser;
+
+	matchDiv.appendChild(foundUserElement);
+
+	var matches = info.similarities;
+
+	if(matches["highschool"])
+	{
+		var highschool = matches["highschool"];
+		var highschoolElement = document.createElement('p');
+		highschoolElement.innerHTML = "You both go to " + highschool;
+
+		matchDiv.appendChild(highschoolElement);
+	}
+
+	if(matches["state"])
+	{
+		var state = matches["state"];
+		var stateElement = document.createElement('p');
+		stateElement.innerHTML = "You both live in " + state;
+
+		matchDiv.appendChild(stateElement);
+	}
+
+	if(matches.favorites){
+		var favorites = matches.favorites;
+		var allFavorites = "";
+		console.log(favorites);
+		for(var thing in favorites)
+		{
+			allFavorites += favorites[thing] + " ";
+		}
+
+		var favoritesElement = document.createElement('p');
+		favoritesElement.innerHTML = "You both like " + allFavorites;
+
+		matchDiv.appendChild(favoritesElement);
+	}
+
+	// add a button to prompt comparison on the page
+	var backButton = document.createElement('button');
+	backButton.setAttribute("id", "back");
+	backButton.innerHTML = "<- Back";
+
+	 matchDiv.appendChild(backButton);
+
+	contentDiv.appendChild(matchDiv);
+
+	document.getElementById("back").onclick= function(){FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', function(resp) { updateStatusGoodLogin(resp); parsePersonalInfo(resp);});};
+
+}
+
+/*
 // Sets up Google Map
 function initializeMap() {
 
@@ -152,4 +236,4 @@ function success(position) {
 // From MDN
 function error() {
   console.log("Couldn't retrieve location");
-};
+};*/
