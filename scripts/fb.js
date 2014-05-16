@@ -1,87 +1,148 @@
-"use strict";
+(function(){
+	"use strict";
 
-// This is called with the results from from FB.getLoginStatus().
-function statusChangeCallback(response) {
-	console.log('statusChangeCallback');
-	console.log(response);
-	// The response object is returned with a status field that lets the
-	// app know the current login status of the person.
-	// Full docs on the response object can be found in the documentation
-	// for FB.getLoginStatus().
-	if (response.status === 'connected') {
-		// Logged into your app and Facebook.
-		//testAPI();
-		FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', function(resp) { updateStatusGoodLogin(resp); parsePersonalInfo(resp);});
-	} else if (response.status === 'not_authorized') {
-		// The person is logged into Facebook, but not your app.
-		document.getElementById('status').innerHTML = 'Please log ' +
-			'into this app.';
-	} else {
-		// The person is not logged into Facebook, so we're not sure if
-		// they are logged into this app or not.
-		document.getElementById('status').innerHTML = 'Please log ' +
-			'into Facebook.';
+	// Facebook module to be exported later.
+	// This is for our code, NOT the global 'FB' object
+	// which contains their Javascript SDK.
+	var Facebook = {};
+
+	// NOTES ON MODULE MEMBERS:
+	//
+	// init is module init, should be called once the doc is loaded.
+	// will start loading FB JS SDK.
+	//
+	// onready is for when the SDK is fully loaded, NOT when the doc is loaded.
+	
+	// in case we want to add a logging library later
+	Facebook.log = console.log; 
+
+
+	// required for when the Facebook Javascript SDK is loaded
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId      : '1429551510633574',
+			cookie     : true,  // enable cookies to allow the server to access the session
+			xfbml      : true,  // parse social plugins on this page
+			version    : 'v2.0' // use version 2.0
+		});
+
+		console.log("FB SDK loaded.");
+
+		// call any of our first-run facebook code.
+		Facebook.onready();
+	};
+
+	Facebook.application_permission_scope = "user_about_me,user_friends,user_hometown,user_location,user_interests,user_activities,user_likes,user_education_history";
+
+	Facebook.loginButtonAttributes = {
+		"data-size": "xlarge",
+		"data-show-faces": "false",
+		"data-auto-logout-link": "false",
+		"data-scope": Facebook.application_permission_scope,
+		"onlogin": "Facebook.checkLoginState"
 	}
-} 
-// This function is called when someone finishes with the Login
-// Button.  See the onlogin handler attached to it in the sample
-// code below.
-function checkLoginState() {
-	FB.getLoginStatus(function(response) {
-		statusChangeCallback(response);
-	});
-}
-window.fbAsyncInit = function() {
-	FB.init({
-		appId      : '1429551510633574',
-		cookie     : true,  // enable cookies to allow the server to access 
-		// the session
-		xfbml      : true,  // parse social plugins on this page
-		version    : 'v2.0' // use version 2.0
-	});
 
-	// Now that we've initialized the JavaScript SDK, we call 
-	// FB.getLoginStatus().  This function gets the state of the
-	// person visiting this page and can return one of three states to
-	// the callback you provide.  They can be:
-	//
-	// 1. Logged into your app ('connected')
-	// 2. Logged into Facebook, but not your app ('not_authorized')
-	// 3. Not logged into Facebook and can't tell if they are logged into
-	//    your app or not.
-	//
-	// These three cases are handled in the callback function.
 
-	checkLoginState();
+	// module init
+	Facebook.init = function init(){
 
-};
+		// set up login button
+		this.log("fb init");
+		var loginButton = document.getElementById("logIn");
+		this.loginButton = loginButton;
+		var attrs = this.loginButtonAttributes;
+		for (var attr in attrs) {
+			loginButton.setAttribute(attr, attrs[attr]);
+		}
 
-// Load the SDK asynchronously
-(function(d, s, id) {
-	//console.log("gettin ya facebooks");
-	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id)) return;
-	js = d.createElement(s); js.id = id;
-	js.src = "//connect.facebook.net/en_US/sdk.js";
-	fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+		// Load the SDK asynchronously. From FB's docs.
+		(function(d, s, id) {
+			//console.log("gettin ya facebooks");
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
 
-// Here we run a very simple test of the Graph API after login is
-// successful.  See statusChangeCallback() for when this call is made.
-function testAPI() {
-	console.log('Welcome!  Fetching your information.... ');
-	FB.api('/me', function(response) {
-		updateStatusGoodLogin(response);
-	});
-}
+		// ^ implicitly calls window.fbAsyncInit when fully loaded
 
-function updateStatusGoodLogin(resp) {
-		console.log('Good to see you, ' + resp.name + '.');
-		document.getElementById('status').innerHTML = 'Good to see you, ' +
-			resp.name;
-}
+		// set up logout button
+		this.appLogoutBtn = document.getElementById("appLogout");
+		this.appLogoutBtn.onclick = this.appLogout;
+	};
 
-function appLogout() {
-	FB.api('/me/permissions', 'DELETE');
-	checkLoginState();
-}
+
+	// From FB's docs:
+	// This function is called when someone finishes with the Login
+	// Button.  See the onlogin handler attached to it in the sample
+	// code below.
+	Facebook.checkLoginState = function checkLoginState() {
+		this.log("checking login state");
+
+		// because in the function passed to getLoginStatus, 'this' is undefined
+		var scb = this.statusChangeCallback.bind(this);
+		FB.getLoginStatus(function(response) {
+			scb(response);
+		});
+	};
+
+
+	// called when we have a status object
+	Facebook.statusChangeCallback = function statusChangeCallback(response) {
+		this.log('login status checked, result:');
+		this.log(response);
+
+		switch (response.status) {
+			case 'connected':
+				this.log("User is signed in!");
+			break;
+			case 'not_authorized':
+				this.log("User is signed in to FB, but not the app.");
+			break;
+			default:
+				this.log("User is not signed in.");
+			break;
+		}
+	};
+
+	// "log out" of app by revoking all permissions. Really only for testing.
+	Facebook.appLogout = function appLogout() {
+		this.log("logging out");
+		FB.api('/me/permissions', 'DELETE');
+		this.checkLoginState();
+	};
+
+
+	// batch request stuff
+	var base_info_endpoint = "me?fields=id,link,name,education,favorite_teams"; // base profile info
+	var other_endpoints = ["movies", "books", "music"].map(function(str){ return "me/" + str + "?limit=10"});
+
+	var batch_urls = [base_info_endpoint].concat(other_endpoints);
+	var batch_object = { batch: batch_urls.map(function(url){ return { "method": "GET", "relative_url": url }; }) }
+
+	Facebook.getBatchUserInfo = function getBatchUserInfo() {
+		var userdata = {};
+		var callback = function(resp) { 
+			//userdata.main   = resp[0];
+			//userdata.movies = resp[1];
+			//userdata.books  = resp[2];
+			//userdata.music  = resp[3];
+			userdata.main   = JSON.parse(resp[0].body);
+			userdata.movies = JSON.parse(resp[1].body).data;
+			userdata.books  = JSON.parse(resp[2].body).data;
+			userdata.music  = JSON.parse(resp[3].body).data;
+			this.log(userdata);
+		};
+		FB.api("/", "POST", batch_object, callback);
+	};
+
+
+	Facebook.onready = function onready() {
+	}
+
+
+
+	// export facebook module
+	window.Facebook = Facebook;
+})();

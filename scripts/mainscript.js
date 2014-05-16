@@ -3,10 +3,9 @@
 var geocoder;
 var map;
 
-window.addEventListener("onload", init);
 
-function init(){
-	//document.getElementById("logIn").onclick= function(){getInfo('./tests/me.json');};
+window.onload = function init(){
+		Facebook.init();
 }
 
 /** Perform an AJAX request
