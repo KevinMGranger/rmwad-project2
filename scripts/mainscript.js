@@ -1,12 +1,36 @@
 "use strict";
 
+var AppStateEnum = new Enum("Pre_Login", "Logged_In", "Get_Similar");
+var App = {
+		AppStateEnum: AppStateEnum,
+		set state (new_state) {
+				this.on_state_change(new_state, this._app_state);
+				this._app_state = new_state;
+		},
+		get state () { return this._app_state; },
+		log: console.log,
+};
+
+App.on_state_change = function on_app_state_change(new_state, prev_state) {
+		this.log("state change: " + prev_state + " -> " + new_state);
+
+		var ase = AppStateEnum;
+
+		if (prev_state !== ase.Logged_In && new_state === ase.Logged_In) {
+				if (!Facebook.userdata) {
+						Facebook.getBatchUserInfo(parsePersonalInfo);
+				}
+		}
+}
+
+window.App = App;
+
 var geocoder;
 var map;
 
-window.addEventListener("onload", init);
 
-function init(){
-	//document.getElementById("logIn").onclick= function(){getInfo('./tests/me.json');};
+window.onload = function init(){
+		Facebook.init();
 }
 
 /** Perform an AJAX request
@@ -57,9 +81,8 @@ function parsePersonalInfo(json) {
 	// clear contents of #content div
 	contentDiv.innerHTML="";
 
-	var allInfo = json; 
 
-	var info = json; 
+	var info = json.main; 
 	// find information for the name, high school, first choice major, and favorite sports team
 	var name = info.name;
 	//console.log(name);

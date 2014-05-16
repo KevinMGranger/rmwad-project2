@@ -11,13 +11,13 @@
   	<!-- Import Google Maps -->
    	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDZ0fzff_fYjOqJ0JN4cVI--0vfYVsRxGQ&sensor=false"></script>
 
+	<script src="scripts/enum.js"></script>
    	<script src="scripts/gMaps.js"></script>
-
+	<script src="scripts/fb.js"></script>
 	<script src="scripts/mainscript.js"></script>
 </head>
 
 <body>
-<script src="scripts/fb.js"></script>
 	<header>
 		<h3>Created by Firebert and Ripberger</h3>
 	</header>
@@ -26,7 +26,7 @@
 
 		<div id="content">
 			<img id="banner" src="http://placekitten.com/200/200">
-			<div id="logDiv"><div id="logIn" class="fb-login-button" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false" data-scope="user_about_me,user_friends,user_hometown,user_location,user_interests,user_activities,user_likes,user_education_history" onlogin="checkLoginState()"></div>
+			<div id="logDiv"><div id="logIn" class="fb-login-button" ></div>
 			</div>
 			
 			<div id="load">
@@ -34,13 +34,8 @@
 		</div>
 	</div>
 
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
 	<div id = "logout">
-		<button id="appLogout" onclick="appLogout()">Log Out (for testing)</button>
+		<button id="appLogout">Log Out (for testing)</button>
 		<div id="status">
 		</div>
 	</div>
