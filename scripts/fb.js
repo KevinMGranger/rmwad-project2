@@ -91,6 +91,7 @@
 	};
 
 
+
 	// called when we have a status object
 	Facebook.statusChangeCallback = function statusChangeCallback(response) {
 		this.log('login status checked, result:');
@@ -130,20 +131,20 @@
 	var batch_urls = [base_info_endpoint].concat(other_endpoints);
 	var batch_object = { batch: batch_urls.map(function(url){ return { "method": "GET", "relative_url": url }; }) }
 
-	Facebook.getBatchUserInfo = function getBatchUserInfo() {
+	Facebook.getBatchUserInfo = function getBatchUserInfo(callback) {
 		var userdata = {};
-		var callback = function(resp) { 
-			//userdata.main   = resp[0];
-			//userdata.movies = resp[1];
-			//userdata.books  = resp[2];
-			//userdata.music  = resp[3];
+		var wrapper_callback = (function(resp) { 
 			userdata.main   = JSON.parse(resp[0].body);
 			userdata.movies = JSON.parse(resp[1].body).data;
 			userdata.books  = JSON.parse(resp[2].body).data;
 			userdata.music  = JSON.parse(resp[3].body).data;
+			this.log("User data:");
 			this.log(userdata);
-		};
-		FB.api("/", "POST", batch_object, callback);
+
+			if (callback) callback(userdata);
+		}).bind(this);
+		FB.api("/", "POST", batch_object, wrapper_callback);
+		this.userdata = userdata;
 	};
 
 
