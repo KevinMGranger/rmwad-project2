@@ -39,7 +39,8 @@
 		"data-show-faces": "false",
 		"data-auto-logout-link": "false",
 		"data-scope": Facebook.application_permission_scope,
-		"onlogin": "Facebook.checkLoginState"
+		//onlogin: console.log
+		onlogin: "Facebook.checkLoginState()"
 	}
 
 
@@ -47,7 +48,8 @@
 	Facebook.init = function init(){
 
 		// set up login button
-		this.log("fb init");
+		//this.log("fb init");
+		console.log("fb init");
 		var loginButton = document.getElementById("logIn");
 		this.loginButton = loginButton;
 		var attrs = this.loginButtonAttributes;
@@ -83,6 +85,7 @@
 		// because in the function passed to getLoginStatus, 'this' is undefined
 		var scb = this.statusChangeCallback.bind(this);
 		FB.getLoginStatus(function(response) {
+			//console.log(response);
 			scb(response);
 		});
 	};
@@ -94,15 +97,21 @@
 		this.log(response);
 
 		switch (response.status) {
-			case 'connected':
+			case 'connected': {
 				this.log("User is signed in!");
-			break;
-			case 'not_authorized':
+				App.state = App.AppStateEnum.Logged_In;
+				break;
+			}
+			case 'not_authorized': {
 				this.log("User is signed in to FB, but not the app.");
-			break;
-			default:
+				App.state = App.AppStateEnum.Pre_Login;
+				break;
+			}
+			default: {
 				this.log("User is not signed in.");
-			break;
+				App.state = App.AppStateEnum.Pre_Login;
+				break;
+			}
 		}
 	};
 

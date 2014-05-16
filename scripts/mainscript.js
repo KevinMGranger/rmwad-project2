@@ -1,5 +1,21 @@
 "use strict";
 
+var App = {
+		AppStateEnum: new Enum("Pre_Login", "Logged_In", "Get_Similar"),
+		set state (new_state) {
+				this.on_state_change(new_state, this._app_state);
+				this._app_state = new_state;
+		},
+		get state () { return this._app_state; },
+		log: console.log,
+};
+
+App.on_state_change = function on_app_state_change(new_state, prev_state) {
+		this.log("state change: " + prev_state + " -> " + new_state);
+}
+
+window.App = App;
+
 var geocoder;
 var map;
 
