@@ -127,6 +127,7 @@
 	// batch request stuff
 	var base_info_endpoint = "me?fields=id,link,name,education,favorite_teams"; // base profile info
 	var other_endpoints = ["movies", "books", "music"].map(function(str){ return "me/" + str + "?limit=10"});
+	other_endpoints.push("me/picture?redirect=false&type=large");
 
 	var batch_urls = [base_info_endpoint].concat(other_endpoints);
 	var batch_object = { batch: batch_urls.map(function(url){ return { "method": "GET", "relative_url": url }; }) }
@@ -138,6 +139,7 @@
 			userdata.movies = JSON.parse(resp[1].body).data;
 			userdata.books  = JSON.parse(resp[2].body).data;
 			userdata.music  = JSON.parse(resp[3].body).data;
+			userdata.pic_url = JSON.parse(resp[4].body).data.url;
 			this.log("User data:");
 			this.log(userdata);
 
