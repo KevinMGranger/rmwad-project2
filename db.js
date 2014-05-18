@@ -4,7 +4,7 @@ var Db = md.Db, Connection = md.Connection, Server = md.Server;
 
 var host = 'localhost';
 var port = Connection.DEFAULT_PORT;
-var db = new Db('tigerfinder', new Server(host, port));
+var db = new Db('tigerfinder', new Server(host, port), {j: true});
 var tigers;
 
 db.open(function(err, db) {
@@ -33,21 +33,24 @@ function main() {
 }
 
 var dingus;
-function ag() {
-	tigers.findOne({_id: 11}, function(err, me){
+function similar_users(id) {
+	tigers.findOne({_id: id}, function(err, me){
 		if (err) throw err;
 
 		// AGGREGATION:
 		// 1. mutate data: interests are intersections of sets
 		// 2. get sum of common interests
 		// 3. sort by number of interests
+		// 4. remove self and those with nothing in common
 		tigers.aggregate([
+			// get common interests
 			{ $project: { 
 				movies: { $setIntersection: ["$movies", me.movies] },
 				music: { $setIntersection: ["$music", me.music] },
 				books: { $setIntersection: ["$books", me.books] },
 				favorite_teams: { $setIntersection: ["$main.favorite_teams", me.main.favorite_teams] }
 			}},
+			// count how many common interests there are
 			{ $project: {
 				movies: 1,
 				music: 1,
@@ -59,7 +62,13 @@ function ag() {
 				{$size: "$books"}, 
 				{$size: "$favorite_teams"}]},
 			}},
-			{ $sort: { like_count: -1 } }
+			// sort by number of common interests, descending
+			{ $sort: { like_count: -1 } },
+			// do not suggest self (that's sad) or those with nothing in common
+			{ $match: { 
+				_id: { $ne: id },
+				like_count: { $lt: 1 }
+			} }
 		],function(err, col){
 			if (err) throw err;
 			dingus = col;
@@ -68,29 +77,28 @@ function ag() {
 	});
 }
 
-
-
-/*
-app.put('/me',function handleMe(req, res, next) {
-	// create or update
-	//res.json({chg_user: "indeed", id: req.params.id});
-	
-	var userdata = req.body;
-
-	//change it up
+function add_or_update_user(userdata) {
+	//format id correctly
 	userdata._id = userdata.main.id;
 	delete userdata.main.id;
 
-	if (!tigers.findOne({_id: userdata._id})) {
-		tigers.insert(userdata);
-	} else {
-		tigers.update({_id: userdata._id}, { $addToSet: {
-			movies: { $each: userdata.movies },
-			music: { $each: userdata.music },
-			books: { $each: userdata.books },
-			"main.favorite_teams": { $each: userdata.main.favorite_teams },
-			"main.education": { $each: userdata.main.education }
-		}});
-	}
-});
-*/
+	tigers.findOne({_id: userdata._id},function(err,tiger) {
+		if (err) throw err;
+		if (!tiger) {
+			tigers.insert(userdata);
+		} else {
+			tigers.update({_id: userdata._id}, { $addToSet: {
+				movies: { $each: userdata.movies },
+				music: { $each: userdata.music },
+				books: { $each: userdata.books },
+				"main.favorite_teams": { $each: userdata.main.favorite_teams },
+				"main.education": { $each: userdata.main.education }
+			}});
+		}
+	});
+}
+
+function user(id, movies) {
+	return { main: { id: id, favorite_teams: [], education: [] },
+		movies: movies, books: [], music: [] };
+}
