@@ -46,8 +46,13 @@ app.get('/me/suggestions', function(req, res, next) {
 		// 3. sort by number of interests
 		// 4. format output
 		tigers.aggregate({
-			$match: 
-
+			$project: { 
+				movies: { $setIntersection: ["$movies", me.movies] },
+				music: { $setIntersection: ["$music", me.music] },
+				books: { $setIntersection: ["$books", me.books] },
+				"main.favorite_teams": { $setIntersection: ["$main.favorite_teams", me.main.favorite_teams] }
+			}
+		});
 		//TODO: aggregation pipeline
 		tigers.find({_id: {$ne: me._id},
 					$or: [
