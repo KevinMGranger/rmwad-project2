@@ -49,19 +49,30 @@ function ag() {
 				books: { $setIntersection: ["$books", me.books] },
 				favorite_teams: { $setIntersection: ["$main.favorite_teams", me.main.favorite_teams] }
 			}},
-			{ $group: {
-				_id: "$_id",
-				movies: "$movies",
-				music: "$music",
-				books: "$books",
-				favorite_teams: "$favorite_teams",
-				like_count: { $sum : {$add: [ 
+			{ $project: {
+				movies: 1,
+				music: 1,
+				books: 1,
+				favorite_teams: 1,
+				like_count: {$add: [ 
 				{$size: "$movies"}, 
 				{$size: "$music"}, 
 				{$size: "$books"}, 
-				{$size: "$favorite_teams"}, 
-			]}}
+				{$size: "$favorite_teams"}]},
 			}},
+			//{ $group: {
+			//	_id: "$_id",
+			//	movies: { $first: "$movies"},
+			//	music: { $first: "$music"},
+			//	books: { $first: "$books"},
+			//	favorite_teams: { $first: "$favorite_teams"},
+			//	like_count: { $sum : {$add: [ 
+			//	{$size: "$movies"}, 
+			//	{$size: "$music"}, 
+			//	{$size: "$books"}, 
+			//	{$size: "$favorite_teams"}, 
+			//]}}
+			//}},
 			{ $sort: { like_count: -1 } }
 		],function(err, col){
 			if (err) throw err;
