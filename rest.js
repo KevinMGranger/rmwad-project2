@@ -18,21 +18,6 @@ app.put('/me',function handleMe(req, res, next) {
 	
 	var userdata = req.body;
 
-	//change it up
-	userdata._id = userdata.main.id;
-	delete userdata.main.id;
-
-	if (!tigers.findOne({_id: userdata._id})) {
-		tigers.insert(userdata);
-	} else {
-		tigers.update({_id: userdata._id}, { $addToSet: {
-			movies: { $each: userdata.movies },
-			music: { $each: userdata.music },
-			books: { $each: userdata.books },
-			"main.favorite_teams": { $each: userdata.main.favorite_teams },
-			"main.education": { $each: userdata.main.education }
-		}});
-	}
 });
 
 app.get('/me/suggestions', function(req, res, next) {

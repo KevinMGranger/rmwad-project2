@@ -23,10 +23,18 @@ var db = new Db('tigerfinder', new Server(host, port), {j: true});
 // wrapping would look like this:
 //
 //exports.public_function = function(arg1, arg2) {
-//	get_db_tigers(function(collection) {
-//		_internal_function(collection, arg1, arg2);
+//	get_db_tigers(function(err, collection) {
+//		_internal_function(err, collection, arg1, arg2);
 //	});
 //}
+//
+//
+//Furthermore, subsequent calls must be done using callbacks. Thus, all exposed functions will also have a final callback argument.
+//These callbacks must all be of the signature
+//function(dbError, dbCollection, functionError, functionResult, callback)
+//
+//But, the get_db_tigers wrapper callback is of signature
+//function(dbError, dbCollection) because there's no function run yet
 
 
 // global database connection (well, collection).
@@ -39,7 +47,7 @@ var tigers;
 // function(collection)
 function get_db_tigers(callback) {
 	if (tigers) {
-		callback(tigers);
+		callback(null, tigers);
 		return;
 	}
 	
@@ -51,7 +59,7 @@ function get_db_tigers(callback) {
 
 			tigers = col;
 
-			callback(tigers);
+			callback(err, tigers);
 		});
 	});
 }
@@ -61,14 +69,12 @@ exports.get_db_tigers = get_db_tigers;
 // Throws an error if the id is not found.
 // callback is the passed the collection when done.
 // Otherwise, will log results to console.
-// If logged, it is array-ified, so might use a lot of memory!
-function _similar_users(tigers, id, callback) {
-	callback = callback || console.log;
-	//callback = callback || function(data) {
-//		data.toArray(function(err, arr) {
-//			console.log(arr);
-//		});
-//	};
+function _similar_users(dbErr, tigers, id, callback) {
+	debugger;
+	//callback = callback || console.log;
+	callback = callback || function(dbErr, col, fnErr, res) {
+		console.log(arguments);
+	};
 
 	tigers.findOne({_id: id}, function(err, me){
 		if (err) throw err;
@@ -103,24 +109,29 @@ function _similar_users(tigers, id, callback) {
 			// do not suggest self (that's sad) or those with nothing in common
 			{ $match: { 
 				_id: { $ne: id },
-				like_count: { $lt: 1 }
+				like_count: { $gt: 0 }
 			} }
 		],function(err, col){
 			if (err) throw err;
 
-			callback(col);
+			callback(dbErr, tigers, err, col);
 		});
 	});
 }
 exports.similar_users = function similar_users(id, callback) {
-	get_db_tigers(function(collection) {
-		_similar_users(collection, id, callback);
+	get_db_tigers(function(dbErr, collection) {
+		_similar_users(dbErr, collection, id, callback);
 	});
 }
 
 
 // add the given user or add new data to their userdata.
-function _add_or_update_user(tigers, userdata) {
+function _add_or_update_user(dbErr, tigers, userdata, callback) {
+	debugger;
+	callback = callback || function(col, usr) {
+		console.log(usr);
+	};
+
 	//format id correctly (fb app-scoped user id -> database _id)
 	userdata._id = userdata.main.id;
 	delete userdata.main.id;
@@ -140,10 +151,12 @@ function _add_or_update_user(tigers, userdata) {
 				"main.education": { $each: userdata.main.education }
 			}});
 		}
+
+		callback(dbErr, tigers, err, userdata);
 	});
 }
-exports.add_or_update_user = function add_or_update_user(userdata) {
-	get_db_tigers(function(collection) {
-		_add_or_update_user(collection, userdata);
+exports.add_or_update_user = function add_or_update_user(userdata, callback) {
+	get_db_tigers(function(dbErr, collection) {
+		_add_or_update_user(dbErr, collection, userdata, callback);
 	});
 }
