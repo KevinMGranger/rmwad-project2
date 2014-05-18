@@ -81,8 +81,12 @@ function parsePersonalInfo(json) {
 	// clear contents of #content div
 	contentDiv.innerHTML="";
 
+	// set user's image
+	getUserImage(json.pic_url);
 
+	// query all of user's basic info
 	var info = json.main; 
+
 	// find information for the name, high school, first choice major, and favorite sports team
 	var name = info.name;
 	//console.log(name);
@@ -130,6 +134,18 @@ function parsePersonalInfo(json) {
 	detailsDiv.appendChild(majorElement);
 	detailsDiv.appendChild(favoriteTeamElement);
 
+	var buttonDiv = document.createElement('div');
+	buttonDiv.setAttribute("id", "buttonDiv");
+
+	// add a button to prompt comparison on the page
+	var compareButton = document.createElement('button');
+	compareButton.setAttribute("id", "find");
+	compareButton.innerHTML = "Find other Tigers!";
+
+	buttonDiv.appendChild(compareButton);
+
+	detailsDiv.appendChild(buttonDiv);
+
 	// append new elements to new <div> 
 	userDiv.appendChild(nameElement); 
 	userDiv.appendChild(detailsDiv);
@@ -140,13 +156,6 @@ function parsePersonalInfo(json) {
 
 	userDiv.appendChild(mapDiv);
 
-	// add a button to prompt comparison on the page
-	var compareButton = document.createElement('button');
-	compareButton.setAttribute("id", "find");
-	compareButton.innerHTML = "Find other Tigers!";
-
-	userDiv.appendChild(compareButton);
-
 	// add div to document 
 	contentDiv.appendChild(userDiv); 
 
@@ -155,6 +164,13 @@ function parsePersonalInfo(json) {
 	initializeMap();
 } // end display response
 
+function getUserImage(url){
+	// find banner div
+	var imgDiv = document.getElementById('banner');
+
+	imgDiv.setAttribute('src', url);
+}
+
 // USER COMPARISON PAGE
 
 function compareUsers(xhr){
@@ -162,6 +178,9 @@ function compareUsers(xhr){
 	parseUserCompare(myJSON);
 }
 
+// need other user image
+// need other user url
+// need error log
 function parseUserCompare(json){
 	// get reference to #content div
 	var contentDiv = document.getElementById('load');
@@ -175,14 +194,22 @@ function parseUserCompare(json){
 	// create a div to hold all the match data
 	var matchDiv = document.createElement('div');
 
+	// ****check if json.error == false
+
+	// find the match's name
 	var foundUser = info.match1;
+
+	// ****add image at the top
+
+	// print the name on screen
 	var foundUserElement = document.createElement('h2');
 	foundUserElement.innerHTML = "You were matched with " + foundUser;
-
 	matchDiv.appendChild(foundUserElement);
 
+	// find all the similarities
 	var matches = info.similarities;
 
+	// if the users are from the same high school, print the school
 	if(matches["highschool"])
 	{
 		var highschool = matches["highschool"];
@@ -192,6 +219,7 @@ function parseUserCompare(json){
 		matchDiv.appendChild(highschoolElement);
 	}
 
+	// if the users are from the same state, print the state
 	if(matches["state"])
 	{
 		var state = matches["state"];
@@ -201,6 +229,7 @@ function parseUserCompare(json){
 		matchDiv.appendChild(stateElement);
 	}
 
+	// if the match has favorites, print out all similarities
 	if(matches.favorites){
 		var favorites = matches.favorites;
 		var allFavorites = "";
@@ -216,15 +245,20 @@ function parseUserCompare(json){
 		matchDiv.appendChild(favoritesElement);
 	}
 
+	// ****add user's link at the bottom
+
+	// ****else append nothing
+
 	// add a button to prompt comparison on the page
 	var backButton = document.createElement('button');
-	backButton.setAttribute("id", "back");
-	backButton.innerHTML = "<- Back";
+	backButton.setAttribute("id", "find");
+	backButton.innerHTML = "Back";
 
-	 matchDiv.appendChild(backButton);
-
+	// append everything to the content div
+	matchDiv.appendChild(backButton);
 	contentDiv.appendChild(matchDiv);
 
-	document.getElementById("back").onclick= function(){Facebook.getBatchUserInfo(parsePersonalInfo);};
+	// reload user's data into the main page
+	document.getElementById("find").onclick= function(){Facebook.getBatchUserInfo(parsePersonalInfo);};
 
 }

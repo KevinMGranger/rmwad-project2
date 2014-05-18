@@ -18,6 +18,7 @@ header{
 	height: 800px;
 	width: 100%;
 	padding-top: 75px;
+	margin-bottom: 20px;
 }
 
 #main-content #content{
@@ -33,13 +34,14 @@ header{
 	height: 200px;
 	margin: auto;
 	margin-bottom: 15px;
+	border: 1px solid black;
 }
 
 #main-content #content button{
 	position: inherit;
 	margin: auto;
-	width: 100px;
-	height: 30px;
+	width: 200px;
+	height: 50px;
 }
 
 #main-content #load{
@@ -47,13 +49,22 @@ header{
 	width: 100%;
 	height: 500px;
 	text-align: center;
-	padding-top: 30px;
+	margin-top: 20px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	background-color: #e6e6e6;
 }
 
 #details{
 	float: left;
 	text-align: left;
 	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+#details #buttonDiv
+{
+	text-align: center;
 }
 
 #map-canvas{
@@ -65,3 +76,90 @@ header{
 	z-index: 1;
 }
 
+/* This button was generated using CSSButtonGenerator.com */
+#find{
+	-moz-box-shadow:inset 0px 0px 0px 0px #f36e21;
+	-webkit-box-shadow:inset 0px 0px 0px 0px #f36e21;
+	box-shadow:inset 0px 0px 0px 0px #f36e21;
+	background-color:#f36e21;
+	-webkit-border-radius:21px;
+	-moz-border-radius:21px;
+	border-radius:21px;
+	text-indent:0px;
+	border:1px solid #eda933;
+	display:inline-block;
+	color:#ffffff;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	line-height:50px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #cd8a15;
+}#find:hover {
+	background-color:#F99458;
+}#find:active {
+	position:relative;
+	top:1px;
+}
+
+#logout{
+	display: inline-block;
+	width: 100%;
+	height: 40px;
+	margin-top: 10px;
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width : 481px) and (max-width : 1024px) {
+/* Styles */
+
+	#main-content #load{
+		height: 725px;
+	}
+
+	#details{
+		float: none;
+		text-align: center;
+		margin-left: auto;
+		margin-bottom: 20px;
+	}
+
+	#map-canvas{
+		float: none;
+		width: 400px;
+		height: 400px;
+		margin-left: auto;
+		margin-right: auto;
+		border:1px solid black;
+		z-index: 1;
+	}
+
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (min-width : 320px) and (max-width : 480px) {
+/* Styles */
+
+	#main-content #load{
+		height: 800px;
+	}
+
+	#details{
+		float: none;
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 20px;
+	}
+
+	#map-canvas{
+		float: none;
+		width: 280px;
+		height: 400px;
+		margin-left: auto;
+		margin-right: auto;
+		border:1px solid black;
+		z-index: 1;
+	}
+}

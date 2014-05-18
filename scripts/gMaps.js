@@ -2,7 +2,8 @@
 
 var latitude, longitude = 0;
 var infowindow = new google.maps.InfoWindow();
-var address = " " ;
+var address = " ";
+var bounds = new google.maps.LatLngBounds();
 
 // Sets up Google Map
 function initializeMap() {
@@ -18,23 +19,36 @@ function initializeMap() {
 };
 
 // From MDN
+// bounds from 
+// http://wrightshq.com/playground/placing-multiple-markers-on-a-google-map-using-api-3/
 function success(position) {
   latitude  = position.coords.latitude;
   longitude = position.coords.longitude;
 
   var latlng = new google.maps.LatLng(latitude,longitude);
 
-  console.log(latitude + " " + longitude);
+  //console.log(latitude + " " + longitude);
 
   // give map options
   var myOptions = {
     center: latlng,
-    zoom: 16,
+    zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
+  var marker = new google.maps.Marker({
+    position: new google.maps.LatLng(43.083848,-77.6799),
+    title:"RIT"
+  });
+
+  // add RIT's lat lng to the bounds
+  bounds.extend(marker.position);
+
   // create google map  
   map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+
+  // To add the marker to the map, call setMap();
+  marker.setMap(map);
 
   codeLatLng();
 };
@@ -63,11 +77,14 @@ function codeLatLng() {
         geocoder.geocode( { 'address': address}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
 
-            map.setCenter(results[0].geometry.location);
+            bounds.extend(results[0].geometry.location);
             var marker = new google.maps.Marker({
                 map: map,
                 position: results[0].geometry.location
             });
+
+            // add user's obfuscated lat lng to bounds
+            map.fitBounds(bounds);
           } else {
             alert('Geocode was not successful for the following reason: ' + status);
           }
