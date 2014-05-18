@@ -14,20 +14,32 @@ var db = new Db('tigerfinder', new Server(host, port), {j: true});
 // This will be done in a function that takes a callback as an argument,
 // only calling the function when ready.
 //
-// The "proper" way of doing this is with functions that take the connection
-// as an argument, not this global variable stuff... but hey, it works.
+// So, we'll have internal versions of functions that will take a
+// collection as an argument.
 //
 // Inspiration from http://stackoverflow.com/questions/11991544/nodejs-mongodb-use-an-opening-connection
 
-// global database connection. undefined until db is connected to
+
+// wrapping would look like this:
+//
+//exports.public_function = function(arg1, arg2) {
+//	get_db_tigers(function(collection) {
+//		_internal_function(collection, arg1, arg2);
+//	});
+//}
+
+
+// global database connection (well, collection).
+// undefined until db is connected to
 var tigers;
 
 // call the callback only if the database connection is ready. if it's not,
 // set it up, then call.
-// If you want arguments on the callback, use .bind()
+// Callback signature:
+// function(collection)
 function get_db_tigers(callback) {
 	if (tigers) {
-		callback();
+		callback(tigers);
 		return;
 	}
 	
@@ -39,17 +51,18 @@ function get_db_tigers(callback) {
 
 			tigers = col;
 
-			callback();
+			callback(tigers);
 		});
 	});
 }
+exports.get_db_tigers = get_db_tigers;
 
 // get a collection of users similar to the user of given id.
 // Throws an error if the id is not found.
 // callback is the passed the collection when done.
 // Otherwise, will log results to console.
 // If logged, it is array-ified, so might use a lot of memory!
-function _similar_users(id, callback) {
+function _similar_users(tigers, id, callback) {
 	callback = callback || console.log;
 	//callback = callback || function(data) {
 //		data.toArray(function(err, arr) {
@@ -99,10 +112,15 @@ function _similar_users(id, callback) {
 		});
 	});
 }
-exports.similar_users = get_db_tigers.bind(undefined, _similar_users);
+exports.similar_users = function similar_users(id, callback) {
+	get_db_tigers(function(collection) {
+		_similar_users(collection, id, callback);
+	});
+}
+
 
 // add the given user or add new data to their userdata.
-function _add_or_update_user(userdata) {
+function _add_or_update_user(tigers, userdata) {
 	//format id correctly (fb app-scoped user id -> database _id)
 	userdata._id = userdata.main.id;
 	delete userdata.main.id;
@@ -124,4 +142,8 @@ function _add_or_update_user(userdata) {
 		}
 	});
 }
-exports.add_or_update_user = get_db_tigers.bind(undefined, _add_or_update_user);
+exports.add_or_update_user = function add_or_update_user(userdata) {
+	get_db_tigers(function(collection) {
+		_add_or_update_user(collection, userdata);
+	});
+}
