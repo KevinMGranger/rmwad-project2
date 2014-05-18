@@ -5,25 +5,41 @@ var host = 'localhost';
 var port = Connection.DEFAULT_PORT;
 // j: true means wait for FS journal to confirm write
 var db = new Db('tigerfinder', new Server(host, port), {j: true});
+
+// The Dark Side of Asynchronicity:
+// to re-use a single connection, there will be a closured connection
+// that will be instantiated if not there yet, but nothing will happen
+// if it is.
+//
+// This will be done in a function that takes a callback as an argument,
+// only calling the function when ready.
+//
+// The "proper" way of doing this is with functions that take the connection
+// as an argument, not this global variable stuff... but hey, it works.
+//
+// Inspiration from http://stackoverflow.com/questions/11991544/nodejs-mongodb-use-an-opening-connection
+
+// global database connection. undefined until db is connected to
 var tigers;
 
-// "constructor" for database -- opens connection to db and creates
-// reference to collection. Not a real ctor because there can only be one,
-// and all values are closured and not in an object.
-// Note: means methods will be attached to constructor itself,
-// NOT the prototype
-function database_connect() {
-		debugger;
-	db.open(function(err, db) {
-		debugger;
+// call the callback only if the database connection is ready. if it's not,
+// set it up, then call.
+// If you want arguments on the callback, use .bind()
+function get_db_tigers(callback) {
+	if (tigers) {
+		callback();
+		return;
+	}
+	
+	db.open(function(err, database) {
 		if (err) throw err;
 
-		db.collection('tigers', function(err, col) {
-		debugger;
+		database.collection('tigers', function(err, col) {
 			if (err) throw err;
 
-			//console.log(col);
 			tigers = col;
+
+			callback();
 		});
 	});
 }
@@ -33,8 +49,7 @@ function database_connect() {
 // callback is the passed the collection when done.
 // Otherwise, will log results to console.
 // If logged, it is array-ified, so might use a lot of memory!
-function similar_users(id, callback) {
-	debugger;
+function _similar_users(id, callback) {
 	callback = callback || console.log;
 	//callback = callback || function(data) {
 //		data.toArray(function(err, arr) {
@@ -84,10 +99,10 @@ function similar_users(id, callback) {
 		});
 	});
 }
-database_connect.similar_users = similar_users;
+exports.similar_users = get_db_tigers.bind(undefined, _similar_users);
 
 // add the given user or add new data to their userdata.
-function add_or_update_user(userdata) {
+function _add_or_update_user(userdata) {
 	//format id correctly (fb app-scoped user id -> database _id)
 	userdata._id = userdata.main.id;
 	delete userdata.main.id;
@@ -109,13 +124,4 @@ function add_or_update_user(userdata) {
 		}
 	});
 }
-database_connect.add_or_update_user = add_or_update_user;
-
-module.exports = database_connect;
-
-debugger;
-database_connect();
-console.log(tigers);
-/*
-similar_users(parseInt(process.argv[2], 10));
-*/
+exports.add_or_update_user = get_db_tigers.bind(undefined, _add_or_update_user);
