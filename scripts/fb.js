@@ -131,13 +131,18 @@
 	var batch_urls = [base_info_endpoint].concat(other_endpoints);
 	var batch_object = { batch: batch_urls.map(function(url){ return { "method": "GET", "relative_url": url }; }) }
 
+	// todo: figure out why stripping headers doesn't work
+
 	Facebook.getBatchUserInfo = function getBatchUserInfo(callback) {
 		var userdata = {};
 		var wrapper_callback = (function(resp) { 
+			//strip out unneeded data
+			function want(data) { return { name: data.name, id: data.id }; }
 			userdata.main   = JSON.parse(resp[0].body);
-			userdata.movies = JSON.parse(resp[1].body).data;
-			userdata.books  = JSON.parse(resp[2].body).data;
-			userdata.music  = JSON.parse(resp[3].body).data;
+			userdata.movies = JSON.parse(resp[1].body).data.map(want);
+			userdata.books  = JSON.parse(resp[2].body).data.map(want);
+			userdata.music  = JSON.parse(resp[3].body).data.map(want);
+
 			this.log("User data:");
 			this.log(userdata);
 
