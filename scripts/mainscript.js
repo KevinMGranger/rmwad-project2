@@ -12,7 +12,7 @@ var App = {
 };
 
 App.on_state_change = function on_app_state_change(new_state, prev_state) {
-		this.log("state change: " + prev_state + " -> " + new_state);
+		console.log("state change: " + prev_state + " -> " + new_state);
 
 		var ase = AppStateEnum;
 
@@ -225,6 +225,6 @@ function parseUserCompare(json){
 
 	contentDiv.appendChild(matchDiv);
 
-	document.getElementById("back").onclick= function(){FB.api('/me?fields=education,name,inspirational_people,favorite_athletes,favorite_teams,inspirational_people', function(resp) { updateStatusGoodLogin(resp); parsePersonalInfo(resp);});};
+	document.getElementById("back").onclick= function(){Facebook.getBatchUserInfo(parsePersonalInfo);};
 
 }

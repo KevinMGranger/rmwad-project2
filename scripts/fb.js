@@ -80,7 +80,7 @@
 	// Button.  See the onlogin handler attached to it in the sample
 	// code below.
 	Facebook.checkLoginState = function checkLoginState() {
-		this.log("checking login state");
+		console.log("checking login state");
 
 		// because in the function passed to getLoginStatus, 'this' is undefined
 		var scb = this.statusChangeCallback.bind(this);
@@ -94,22 +94,22 @@
 
 	// called when we have a status object
 	Facebook.statusChangeCallback = function statusChangeCallback(response) {
-		this.log('login status checked, result:');
-		this.log(response);
+		console.log('login status checked, result:');
+		console.log(response);
 
 		switch (response.status) {
 			case 'connected': {
-				this.log("User is signed in!");
+				console.log("User is signed in!");
 				App.state = App.AppStateEnum.Logged_In;
 				break;
 			}
 			case 'not_authorized': {
-				this.log("User is signed in to FB, but not the app.");
+				console.log("User is signed in to FB, but not the app.");
 				App.state = App.AppStateEnum.Pre_Login;
 				break;
 			}
 			default: {
-				this.log("User is not signed in.");
+				console.log("User is not signed in.");
 				App.state = App.AppStateEnum.Pre_Login;
 				break;
 			}
@@ -118,7 +118,7 @@
 
 	// "log out" of app by revoking all permissions. Really only for testing.
 	Facebook.appLogout = function appLogout() {
-		this.log("logging out");
+		console.log("logging out");
 		FB.api('/me/permissions', 'DELETE');
 		this.checkLoginState();
 	};
@@ -140,8 +140,8 @@
 			userdata.books  = JSON.parse(resp[2].body).data;
 			userdata.music  = JSON.parse(resp[3].body).data;
 			userdata.pic_url = JSON.parse(resp[4].body).data.url;
-			this.log("User data:");
-			this.log(userdata);
+			console.log("User data:");
+			console.log(userdata);
 
 			if (callback) callback(userdata);
 		}).bind(this);
