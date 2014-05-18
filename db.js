@@ -39,21 +39,26 @@ function ag() {
 
 		// AGGREGATION:
 		// 1. mutate data: interests are intersections of sets
-		// 2. "reduce" (aka sum) interests
+		// 2. get sum of common interests
 		// 3. sort by number of interests
-		// 4. format output
 		tigers.aggregate([
 			{ $project: { 
 				movies: { $setIntersection: ["$movies", me.movies] },
 				music: { $setIntersection: ["$music", me.music] },
 				books: { $setIntersection: ["$books", me.books] },
 				favorite_teams: { $setIntersection: ["$main.favorite_teams", me.main.favorite_teams] }
-			} },
-			{ $unwind: "$movies" },
-			{ $unwind: "$music" },
-			{ $unwind: "$books" },
-			{ $unwind: "$favorite_teams" },
-			{ $group: {_id: "$_id", like_count: { $sum : 1 } } },
+			}},
+			{ $project: {
+				movies: 1,
+				music: 1,
+				books: 1,
+				favorite_teams: 1,
+				like_count: {$add: [ 
+				{$size: "$movies"}, 
+				{$size: "$music"}, 
+				{$size: "$books"}, 
+				{$size: "$favorite_teams"}]},
+			}},
 			{ $sort: { like_count: -1 } }
 		],function(err, col){
 			if (err) throw err;
