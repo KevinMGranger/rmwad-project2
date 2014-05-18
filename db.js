@@ -1,39 +1,47 @@
 var md = require('mongodb');
 var Db = md.Db, Connection = md.Connection, Server = md.Server;
-//var MC = md.MongoClient;
 
 var host = 'localhost';
 var port = Connection.DEFAULT_PORT;
+// j: true means wait for FS journal to confirm write
 var db = new Db('tigerfinder', new Server(host, port), {j: true});
 var tigers;
 
-db.open(function(err, db) {
-	if (err) throw err;
-
-	db.collection('tigers', function(err, col) {
+// "constructor" for database -- opens connection to db and creates
+// reference to collection. Not a real ctor because there can only be one,
+// and all values are closured and not in an object.
+// Note: means methods will be attached to constructor itself,
+// NOT the prototype
+function database_connect() {
+		debugger;
+	db.open(function(err, db) {
+		debugger;
 		if (err) throw err;
 
-		tigers = col;
+		db.collection('tigers', function(err, col) {
+		debugger;
+			if (err) throw err;
 
-		main();
+			//console.log(col);
+			tigers = col;
+		});
 	});
-});
-
-function main() {
-	if (require.main === module) {
-		if (process.argv.length > 2) {
-			switch (process.argv[2]) {
-				case 'ag': {
-					ag();
-					break;
-				}
-			}
-		}
-	}
 }
 
-var dingus;
-function similar_users(id) {
+// get a collection of users similar to the user of given id.
+// Throws an error if the id is not found.
+// callback is the passed the collection when done.
+// Otherwise, will log results to console.
+// If logged, it is array-ified, so might use a lot of memory!
+function similar_users(id, callback) {
+	debugger;
+	callback = callback || console.log;
+	//callback = callback || function(data) {
+//		data.toArray(function(err, arr) {
+//			console.log(arr);
+//		});
+//	};
+
 	tigers.findOne({_id: id}, function(err, me){
 		if (err) throw err;
 
@@ -71,22 +79,26 @@ function similar_users(id) {
 			} }
 		],function(err, col){
 			if (err) throw err;
-			dingus = col;
-			console.log(col);
+
+			callback(col);
 		});
 	});
 }
+database_connect.similar_users = similar_users;
 
+// add the given user or add new data to their userdata.
 function add_or_update_user(userdata) {
-	//format id correctly
+	//format id correctly (fb app-scoped user id -> database _id)
 	userdata._id = userdata.main.id;
 	delete userdata.main.id;
 
 	tigers.findOne({_id: userdata._id},function(err,tiger) {
 		if (err) throw err;
+
+		// if not found, create new entry
 		if (!tiger) {
 			tigers.insert(userdata);
-		} else {
+		} else { // otherwise, add any new entries
 			tigers.update({_id: userdata._id}, { $addToSet: {
 				movies: { $each: userdata.movies },
 				music: { $each: userdata.music },
@@ -97,8 +109,13 @@ function add_or_update_user(userdata) {
 		}
 	});
 }
+database_connect.add_or_update_user = add_or_update_user;
 
-function user(id, movies) {
-	return { main: { id: id, favorite_teams: [], education: [] },
-		movies: movies, books: [], music: [] };
-}
+module.exports = database_connect;
+
+debugger;
+database_connect();
+console.log(tigers);
+/*
+similar_users(parseInt(process.argv[2], 10));
+*/
