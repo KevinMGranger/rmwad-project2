@@ -78,6 +78,7 @@ function _similar_users(dbErr, tigers, id, callback) {
 
 	tigers.findOne({_id: id}, function(err, me){
 		if (err) throw err;
+		if (!me) callback(dbErr, tigers, new Error("Queried User Not Found"), null);
 
 		// AGGREGATION:
 		// 1. mutate data: interests are intersections of sets

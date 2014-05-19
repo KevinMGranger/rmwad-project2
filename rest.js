@@ -8,6 +8,7 @@ app.use(bodyParser());
 var db = require('./dbclient.js');
 var user = require('./user.js');
 
+
 app.use('/user/:id?', user_id_param_handler);
 app.route('/user/:id?')
 .put(validate_user_data, user_put)
@@ -72,7 +73,11 @@ app.route("/user/:id/similar")
 
 	try {
 		db.similar_users(uid,function(dbErr, _, fnErr, users) {
-			res.send(200, users);
+			debugger;
+			console.error("FNERR: ", fnErr);
+			if (fnErr) res.send(200, {error: "No users were found to match you."});
+
+			if (users) res.send(200, users);
 		});
 	} catch (e) {
 		console.error(e);
@@ -80,8 +85,21 @@ app.route("/user/:id/similar")
 	}
 });
 
+function getIndex(req, res, next) {
+	res.sendfile('./index.html');
+}
+
+app.get('/', express.static('/'));
+//app.get('/index.html', express.static('./');
+
 process.on('uncaughtException', function(err) {
 	console.error(err.stack);
 });
 
-app.listen(3000);
+var listening_port = 3000;
+
+if (process.argv.length >= 3) {
+	listening_port = process.argv[2];
+}
+
+app.listen(listening_port);
