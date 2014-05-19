@@ -157,6 +157,11 @@ function _add_or_update_user(dbErr, tigers, userdata, callback) {
 }
 exports.add_or_update_user = function add_or_update_user(userdata, callback) {
 	get_db_tigers(function(dbErr, collection) {
-		_add_or_update_user(dbErr, collection, userdata, callback);
+			_add_or_update_user(dbErr, collection, userdata, callback);
+		//try {
+		//	_add_or_update_user(dbErr, collection, userdata, callback);
+		//} catch (e) {
+		//	console.error("Error in _add_or_update_user: ", e);
+		//}
 	});
 }

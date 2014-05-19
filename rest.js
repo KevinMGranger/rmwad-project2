@@ -1,6 +1,10 @@
 var express = require('express');
 var app = express();
 
+var bodyParser = require('body-parser');
+
+app.use(bodyParser());
+
 var db = require('./dbclient.js');
 var user = require('./user.js');
 
@@ -14,8 +18,9 @@ app.route('/user/:id?')
 function user_deny(req, res, next) {
 	res.send(405); // method not allowed
 }
+
 function user_id_param_handler(req, res, next, id) {
-	res.send(200, "dingus");
+	console.log("in idparam");
 	console.log("id: ", id);
 	if (id === "me") {
 		next();
@@ -28,11 +33,14 @@ function user_id_param_handler(req, res, next, id) {
 
 
 function validate_user_data(req, res, next) {
-	next();
+	console.log(req.body);
+	res.send(req.body);
+	debugger;
 	if (user.validate(req.body)) {
 		next();
 	} else {
-		res.send(400, "sent data did not validate"); // malformed
+		console.log("bad data: ", req);
+		res.send(400, req.body); // malformed
 	}
 }
 	
@@ -48,22 +56,29 @@ function user_put(req, res, next) {
 		});
 	} catch (e) {
 		console.error(e);
-		res.send(500); // internal server error
+		console.error("sent data: ", userdata);
+		res.send(500, "db whoopsie"); // internal server error
 	}
 }
 
 
-
-function get_suggestions(req, res, next) {
+app.route("/user/:id/similar")
+.get(function get_suggestions(req, res, next) {
 	// get similar users
 	
+	var uid = parseInt(req.param("id"), 10);
 
-	var uid = req.body
+	console.log("Getting similar users for: ", uid, " (", typeof(uid), ")");
 
-	console.log(uid);
-	
-	res.send(200, uid);
-}
+	try {
+		db.similar_users(uid,function(dbErr, _, fnErr, users) {
+			res.send(200, users);
+		});
+	} catch (e) {
+		console.error(e);
+		res.send(500, "db whoopsie"); // internal server error
+	}
+});
 
 process.on('uncaughtException', function(err) {
 	console.error(err.stack);
