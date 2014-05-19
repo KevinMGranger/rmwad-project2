@@ -89,7 +89,7 @@ function getIndex(req, res, next) {
 	res.sendfile('./index.html');
 }
 
-app.get('/', express.static('/'));
+app.get('/', express.static('.'));
 //app.get('/index.html', express.static('./');
 
 process.on('uncaughtException', function(err) {
