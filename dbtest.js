@@ -1,4 +1,5 @@
 var t = require('./dbclient.js');
+var moobies = require('./user.js').moobies;
 
 //t.get_db_tigers(function(col) {
 //		col.find({},function(err,col) {
